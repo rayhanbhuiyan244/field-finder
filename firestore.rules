@@ -1,0 +1,200 @@
+rules_version = '2';
+
+// =============================================================================
+// Security Rules — Football Turf Booking & Management System (single turf,
+// single owner). Written to match the actual collections used by src/services/*.
+//
+// PLACEHOLDER TO FILL IN BEFORE DEPLOYING:
+//   OWNER_EMAILS below — the one email address allowed to hold role "owner".
+//   Public registration (src/services/authService.ts) only ever creates
+//   role "customer" — this allowlist is the actual, enforced mechanism that
+//   decides who can ever become the owner. To provision the owner account:
+//     1. Register normally through the app (creates a "customer" doc).
+//     2. Sign in once with that account so its email is verified in your head.
+//     3. In the Firebase Console, edit users/{uid} and set role: "owner" —
+//        OR, cleaner: add that email to OWNER_EMAILS below, delete the
+//        customer doc, and re-register; the create rule will then accept
+//        role: "owner" for that email.
+//   There is currently no in-app UI to grant "owner" — that's intentional.
+// =============================================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function ownerEmails() {
+      // Replace with the real owner email(s) before deploying.
+      return ['rayhan.bhuiyan8330@gmail.com'];
+    }
+
+    function isOwner() {
+      return isSignedIn() &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'owner';
+    }
+
+    function isSelf(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    // ---------------------------------------------------------------------
+    // users/{uid}
+    // ---------------------------------------------------------------------
+    match /users/{uid} {
+      allow get: if isSignedIn() && (isSelf(uid) || isOwner());
+      // Owner dashboard lists customers (listCustomers()) — allow list only
+      // for signed-in owners; a plain customer can never enumerate other users.
+      allow list: if isOwner();
+
+      allow create: if isSelf(uid) &&
+        request.resource.data.role is string &&
+        (
+          request.resource.data.role == 'customer' ||
+          (request.resource.data.role == 'owner' && request.resource.data.email in ownerEmails())
+        );
+
+      // Role is immutable from the client once set — the only path to
+      // "owner" is the allowlisted create above or a manual console edit.
+      allow update: if isSelf(uid) &&
+        request.resource.data.role == resource.data.role &&
+        request.resource.data.email == resource.data.email &&
+        request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['fullName', 'phone', 'photoURL', 'updatedAt']);
+
+      allow delete: if false;
+    }
+
+    // ---------------------------------------------------------------------
+    // bookings/{id}
+    // ---------------------------------------------------------------------
+    match /bookings/{bookingId} {
+      allow get: if isSignedIn() && (isOwner() || resource.data.userId == request.auth.uid);
+      // Firestore validates that a list query is provably constrained to
+      // only match documents satisfying this rule (e.g. the client's
+      // where("userId","==",uid) query) — an unconstrained query that could
+      // return other users' bookings is rejected outright.
+      allow list: if isOwner() || (isSignedIn() && resource.data.userId == request.auth.uid);
+
+      allow create: if isSignedIn() &&
+        request.resource.data.userId == request.auth.uid &&
+        request.resource.data.bookingStatus == 'pending' &&
+        request.resource.data.paymentStatus == 'pending' &&
+        request.resource.data.price is number && request.resource.data.price > 0 &&
+        request.resource.data.bookingDate is string &&
+        request.resource.data.timeSlot is string &&
+        request.resource.data.lockId is string;
+
+      // Owner: any transition (see bookingService.ts for the actual state
+      // machine — confirm/complete/cancel). Customer: self-cancel only,
+      // and only while still pending/confirmed, and only the status fields
+      // change — never price, date, slot, or whose booking it is.
+      allow update: if isOwner() ||
+        (
+          isSignedIn() &&
+          resource.data.userId == request.auth.uid &&
+          resource.data.bookingStatus in ['pending', 'confirmed'] &&
+          request.resource.data.bookingStatus == 'cancelled' &&
+          request.resource.data.userId == resource.data.userId &&
+          request.resource.data.bookingDate == resource.data.bookingDate &&
+          request.resource.data.timeSlot == resource.data.timeSlot &&
+          request.resource.data.price == resource.data.price
+        );
+
+      allow delete: if false; // cancellation is a status update, never a delete
+    }
+
+    // ---------------------------------------------------------------------
+    // slotLocks/{id} — deterministic-id conflict-prevention docs (see
+    // bookingService.ts slotLockId()). Never queried, only get/create/delete.
+    // ---------------------------------------------------------------------
+    match /slotLocks/{lockId} {
+      allow get: if isSignedIn();
+      // Public list is intentional: this is exactly what the public
+      // booking/availability calendars read to show "which slots are
+      // taken" without authentication. These docs carry no customer PII
+      // (just bookingId, bookingDate, timeSlot) — unlike bookings/{id},
+      // which is why availability reads from here instead.
+      allow list: if true;
+      allow create: if isSignedIn();
+      allow update: if false;
+      // Only the owner of the booking this lock protects (or the turf
+      // owner) may release it — otherwise any signed-in customer could
+      // delete a stranger's active hold and steal the slot mid-flow.
+      allow delete: if isOwner() ||
+        (isSignedIn() &&
+          get(/databases/$(database)/documents/bookings/$(resource.data.bookingId)).data.userId == request.auth.uid);
+    }
+
+    // ---------------------------------------------------------------------
+    // timeslots/{id}, pricing/{id}, gallery/{id} — public read, owner write
+    // ---------------------------------------------------------------------
+    match /timeslots/{id} {
+      allow read: if true;
+      allow write: if isOwner();
+    }
+    match /pricing/{id} {
+      allow read: if true;
+      allow write: if isOwner();
+    }
+    match /gallery/{id} {
+      allow read: if true;
+      allow write: if isOwner();
+    }
+
+    // ---------------------------------------------------------------------
+    // maintenanceBlocks/{id} — public read (booking.tsx/availability.tsx
+    // exclude blocked slots without needing auth), owner-only write.
+    // ---------------------------------------------------------------------
+    match /maintenanceBlocks/{id} {
+      allow read: if true;
+      allow write: if isOwner();
+    }
+
+    // ---------------------------------------------------------------------
+    // settings/{docId} — public read (e.g. "business"), owner write
+    // ---------------------------------------------------------------------
+    match /settings/{docId} {
+      allow read: if true;
+      allow write: if isOwner();
+    }
+
+    // ---------------------------------------------------------------------
+    // reviews/{bookingId} — doc id IS the bookingId (see reviewService.ts),
+    // which is what makes "one review per completed booking" an actual
+    // data guarantee rather than a client-side courtesy check.
+    // ---------------------------------------------------------------------
+    match /reviews/{bookingId} {
+      allow read: if true;
+      allow create: if isSignedIn() &&
+        request.resource.data.userId == request.auth.uid &&
+        request.resource.data.rating is int &&
+        request.resource.data.rating >= 1 && request.resource.data.rating <= 5 &&
+        get(/databases/$(database)/documents/bookings/$(bookingId)).data.userId == request.auth.uid &&
+        get(/databases/$(database)/documents/bookings/$(bookingId)).data.bookingStatus == 'completed';
+      allow update: if false;
+      allow delete: if isOwner(); // owner can remove an abusive review; nobody else can
+    }
+
+    // ---------------------------------------------------------------------
+    // notifications/{id} — cross-user by design (a customer's action
+    // writes a notification into the OWNER's inbox and vice versa, since
+    // there is no Cloud Functions layer in v1 to do this server-side).
+    // This means the recipient list is technically spoofable by a signed-in
+    // user; low severity (fake in-app text, no data/financial access) but
+    // worth closing with a Cloud Function in a later phase.
+    // ---------------------------------------------------------------------
+    match /notifications/{id} {
+      allow get: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() &&
+        request.resource.data.userId is string &&
+        request.resource.data.title is string &&
+        request.resource.data.body is string;
+      allow update: if isSignedIn() && resource.data.userId == request.auth.uid &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['unread']);
+      allow delete: if false;
+    }
+  }
+}
