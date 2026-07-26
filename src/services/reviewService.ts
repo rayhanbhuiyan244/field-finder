@@ -1,11 +1,9 @@
 import {
   collection,
+  addDoc,
   getDocs,
-  getDoc,
-  doc,
-  setDoc,
-  query,
   orderBy,
+  query,
   serverTimestamp,
   type Timestamp,
 } from "firebase/firestore";
@@ -14,10 +12,6 @@ import { db } from "@/firebase/config";
 export interface Review {
   id: string;
   userId?: string;
-  /** The completed booking this review is for. Required for new reviews;
-   * optional only because a handful of seeded testimonials predate this
-   * field and don't map to a real booking. */
-  bookingId?: string;
   name: string;
   initials: string;
   rating: number;
@@ -31,28 +25,12 @@ export async function listReviews(): Promise<Review[]> {
   return snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<Review, "id">) }));
 }
 
-/** A booking can only be reviewed once — used to hide/disable the "Leave a review" action. */
-export async function hasReviewForBooking(bookingId: string): Promise<boolean> {
-  const snap = await getDoc(doc(db, "reviews", bookingId));
-  return snap.exists();
-}
-
-/**
- * Reviews are keyed by bookingId (not an auto-id) so "one review per
- * booking" is an actual data-layer guarantee — the same pattern slotLocks
- * uses for slot uniqueness (§8 of the architecture doc). A second attempt
- * to review the same booking simply can't create a second document.
- */
-export async function createReview(
-  bookingId: string,
-  input: Omit<Review, "id" | "createdAt" | "bookingId">,
-) {
-  await setDoc(doc(db, "reviews", bookingId), {
+export async function createReview(input: Omit<Review, "id" | "createdAt">) {
+  const ref = await addDoc(collection(db, "reviews"), {
     ...input,
-    bookingId,
     createdAt: serverTimestamp(),
   });
-  return bookingId;
+  return ref.id;
 }
 
 export function averageRating(reviews: Review[]): number {

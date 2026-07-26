@@ -80,36 +80,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Kickoff Arena — Book Your Football Turf Anytime" },
-      {
-        name: "description",
-        content:
-          "Book premium football turf slots online. Live availability, transparent pricing, floodlit night matches. Book your match, anytime.",
-      },
+      { name: "description", content: "Book premium football turf slots online. Live availability, transparent pricing, floodlit night matches. Book your match, anytime." },
       { name: "author", content: "Kickoff Arena" },
       { property: "og:title", content: "Kickoff Arena — Book Your Football Turf Anytime" },
-      {
-        property: "og:description",
-        content:
-          "Book premium football turf slots online. Live availability, transparent pricing, floodlit night matches. Book your match, anytime.",
-      },
+      { property: "og:description", content: "Book premium football turf slots online. Live availability, transparent pricing, floodlit night matches. Book your match, anytime." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Kickoff Arena — Book Your Football Turf Anytime" },
-      {
-        name: "twitter:description",
-        content:
-          "Book premium football turf slots online. Live availability, transparent pricing, floodlit night matches. Book your match, anytime.",
-      },
-      {
-        property: "og:image",
-        content:
-          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/bb864e30-2ef8-45ee-ad8e-4269222d8179/id-preview-573d98db--68789920-237e-4b3a-b301-f6883aab672c.lovable.app-1783630789540.png",
-      },
-      {
-        name: "twitter:image",
-        content:
-          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/bb864e30-2ef8-45ee-ad8e-4269222d8179/id-preview-573d98db--68789920-237e-4b3a-b301-f6883aab672c.lovable.app-1783630789540.png",
-      },
+      { name: "twitter:description", content: "Book premium football turf slots online. Live availability, transparent pricing, floodlit night matches. Book your match, anytime." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/bb864e30-2ef8-45ee-ad8e-4269222d8179/id-preview-573d98db--68789920-237e-4b3a-b301-f6883aab672c.lovable.app-1783630789540.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/bb864e30-2ef8-45ee-ad8e-4269222d8179/id-preview-573d98db--68789920-237e-4b3a-b301-f6883aab672c.lovable.app-1783630789540.png" },
     ],
     links: [
       {

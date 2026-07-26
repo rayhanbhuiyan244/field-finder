@@ -4,35 +4,22 @@ import { Calendar as CalendarIcon, CheckCircle2, Clock, MapPin, Info } from "luc
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { PublicLayout } from "@/components/layout/PublicLayout";
+import { business } from "@/lib/mock";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from "@tanstack/react-router";
 import { listTimeSlots } from "@/services/timeslotService";
 import { listPricingRules, computePrice, type PricingRule } from "@/services/pricingService";
-import {
-  createBooking,
-  listBookedSlotsForDate,
-  SlotUnavailableError,
-} from "@/services/bookingService";
+import { createBooking, listBookingsForDate } from "@/services/bookingService";
 import { createNotification } from "@/services/notificationService";
-import { getOwnerUserId } from "@/services/userService";
-import {
-  listMaintenanceBlocksForDate,
-  isSlotBlocked,
-  type MaintenanceBlock,
-} from "@/services/maintenanceService";
-import { getBusinessSettings, type BusinessSettings } from "@/services/gallerySettingsService";
 import { toISODate } from "@/utils/format";
 
 export const Route = createFileRoute("/booking")({
   head: () => ({
     meta: [
       { title: "Book a Slot — Kickoff Arena" },
-      {
-        name: "description",
-        content: "Pick your date and time. Live slot availability updated in real time.",
-      },
+      { name: "description", content: "Pick your date and time. Live slot availability updated in real time." },
     ],
   }),
   component: BookingPage,
@@ -46,12 +33,6 @@ function BookingPage() {
   const [slots, setSlots] = useState<string[]>([]);
   const [rules, setRules] = useState<PricingRule[]>([]);
   const [bookedSlots, setBookedSlots] = useState<Set<string>>(new Set());
-  const [maintenanceBlocks, setMaintenanceBlocks] = useState<MaintenanceBlock[]>([]);
-  const blockedSlots = useMemo(
-    () => new Set(slots.filter((t) => isSlotBlocked(t, maintenanceBlocks))),
-    [slots, maintenanceBlocks],
-  );
-  const [business, setBusiness] = useState<BusinessSettings | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const dateStr = useMemo(() => (date ? toISODate(date) : ""), [date]);
 
@@ -59,22 +40,16 @@ function BookingPage() {
     listTimeSlots()
       .then((s) => setSlots(s.map((x) => x.label)))
       .catch(() => setSlots([]));
-    listPricingRules()
-      .then(setRules)
-      .catch(() => setRules([]));
-    getBusinessSettings()
-      .then(setBusiness)
-      .catch(() => setBusiness(null));
+    listPricingRules().then(setRules).catch(() => setRules([]));
   }, []);
 
   useEffect(() => {
     if (!dateStr) return;
-    listBookedSlotsForDate(dateStr)
-      .then(setBookedSlots)
+    listBookingsForDate(dateStr)
+      .then((rows) => {
+        setBookedSlots(new Set(rows.filter((r) => r.bookingStatus !== "cancelled").map((r) => r.timeSlot)));
+      })
       .catch(() => setBookedSlots(new Set()));
-    listMaintenanceBlocksForDate(dateStr)
-      .then(setMaintenanceBlocks)
-      .catch(() => setMaintenanceBlocks([]));
   }, [dateStr]);
 
   const price = selected && date ? computePrice(rules, selected, date) : 0;
@@ -88,11 +63,6 @@ function BookingPage() {
       return;
     }
     if (!selected || !date) return;
-    if (blockedSlots.has(selected)) {
-      toast.error("This slot is blocked for maintenance");
-      setSelected(null);
-      return;
-    }
     setSubmitting(true);
     try {
       const id = await createBooking({
@@ -105,33 +75,16 @@ function BookingPage() {
       });
       await createNotification({
         userId: user.uid,
-        title: "Booking requested",
-        body: `${selected} on ${date.toDateString()} · Total ₹${total} · Awaiting confirmation`,
+        title: "Booking confirmed",
+        body: `${selected} on ${date.toDateString()} · Total ₹${total}`,
       });
-      const ownerId = await getOwnerUserId().catch(() => null);
-      if (ownerId) {
-        await createNotification({
-          userId: ownerId,
-          title: "New booking request",
-          body: `${profile.fullName} requested ${selected} on ${date.toDateString()} · ₹${total}`,
-        }).catch(() => {});
-      }
-      toast.success("Booking requested!", {
-        description: `${selected} on ${date.toDateString()} · Total ₹${total} · Ref ${id.slice(0, 6)}. The turf owner will confirm shortly.`,
+      toast.success("Booking confirmed!", {
+        description: `${selected} on ${date.toDateString()} · Total ₹${total} · Ref ${id.slice(0, 6)}`,
       });
       setBookedSlots((prev) => new Set(prev).add(selected));
       setSelected(null);
     } catch (err) {
-      if (err instanceof SlotUnavailableError) {
-        toast.error(err.message);
-        // Someone else just took it — refresh so the grid reflects reality.
-        listBookedSlotsForDate(dateStr)
-          .then(setBookedSlots)
-          .catch(() => {});
-        setSelected(null);
-      } else {
-        toast.error(err instanceof Error ? err.message : "Booking failed");
-      }
+      toast.error(err instanceof Error ? err.message : "Booking failed");
     } finally {
       setSubmitting(false);
     }
@@ -146,13 +99,10 @@ function BookingPage() {
               Book a slot
             </span>
             <h1 className="mt-3 text-4xl font-bold tracking-tight">Pick your date & time</h1>
-            <p className="mt-2 text-muted-foreground">
-              Slots update in real time. Cancel up to 6 hours before start.
-            </p>
+            <p className="mt-2 text-muted-foreground">Slots update in real time. Cancel up to 6 hours before start.</p>
           </div>
           <div className="flex items-center gap-2 rounded-xl border border-border/60 bg-card px-4 py-2 text-sm text-muted-foreground shadow-sm">
-            <MapPin className="h-4 w-4 text-secondary" /> {business?.name ?? "Loading…"}
-            {business?.address ? `, ${business.address}` : ""}
+            <MapPin className="h-4 w-4 text-secondary" /> {business.name}, Indiranagar
           </div>
         </div>
 
@@ -196,9 +146,8 @@ function BookingPage() {
                 )}
                 {slots.map((t) => {
                   const booked = bookedSlots.has(t);
-                  const blocked = blockedSlots.has(t);
-                  const isBooked = booked || blocked;
-                  const status = selected === t ? "selected" : isBooked ? "booked" : "available";
+                  const status = selected === t ? "selected" : booked ? "booked" : "available";
+                  const isBooked = booked;
                   return (
                     <button
                       key={t}
@@ -207,30 +156,16 @@ function BookingPage() {
                       className={cn(
                         "group relative rounded-xl border p-3 text-left transition-all",
                         "disabled:cursor-not-allowed",
-                        status === "available" &&
-                          "border-border bg-background hover:border-secondary hover:bg-secondary/5",
-                        status === "booked" &&
-                          "border-destructive/20 bg-destructive/5 text-muted-foreground",
-                        status === "selected" &&
-                          "border-primary bg-primary text-primary-foreground shadow-md scale-[1.02]",
+                        status === "available" && "border-border bg-background hover:border-secondary hover:bg-secondary/5",
+                        status === "booked" && "border-destructive/20 bg-destructive/5 text-muted-foreground",
+                        status === "selected" && "border-primary bg-primary text-primary-foreground shadow-md scale-[1.02]",
                       )}
                     >
                       <p className="text-sm font-semibold">{t}</p>
-                      <p
-                        className={cn(
-                          "mt-1 text-xs capitalize",
-                          status === "selected"
-                            ? "text-primary-foreground/80"
-                            : "text-muted-foreground",
-                        )}
-                      >
-                        {status === "booked"
-                          ? blocked
-                            ? "Maintenance"
-                            : "Booked"
-                          : status === "selected"
-                            ? "Selected"
-                            : `₹${computePrice(rules, t, date ?? new Date())}`}
+                      <p className={cn("mt-1 text-xs capitalize",
+                        status === "selected" ? "text-primary-foreground/80" : "text-muted-foreground",
+                      )}>
+                        {status === "booked" ? "Booked" : status === "selected" ? "Selected" : `₹${computePrice(rules, t, date ?? new Date())}`}
                       </p>
                       {status === "selected" && (
                         <CheckCircle2 className="absolute right-2 top-2 h-4 w-4" />
@@ -245,18 +180,7 @@ function BookingPage() {
             <div className="rounded-2xl border border-border/60 bg-card p-6 shadow-[0_2px_8px_-4px_rgba(15,23,42,0.06)]">
               <h3 className="text-lg font-semibold">Booking summary</h3>
               <dl className="mt-4 divide-y divide-border/60 text-sm">
-                <Row
-                  label="Date"
-                  value={
-                    date
-                      ? date.toLocaleDateString(undefined, {
-                          weekday: "long",
-                          day: "numeric",
-                          month: "long",
-                        })
-                      : "—"
-                  }
-                />
+                <Row label="Date" value={date ? date.toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long" }) : "—"} />
                 <Row label="Time" value={selected ?? "Select a slot"} />
                 <Row label="Duration" value="1 hour" />
                 <Row label="Price" value={selected ? `₹${price}` : "—"} />

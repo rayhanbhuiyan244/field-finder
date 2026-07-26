@@ -36,17 +36,9 @@ export function SkeletonTable({
   className?: string;
 }) {
   return (
-    <div
-      className={cn(
-        "overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm",
-        className,
-      )}
-    >
+    <div className={cn("overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm", className)}>
       <div className="border-b border-border/60 bg-muted/40 px-4 py-3">
-        <div
-          className="grid gap-4"
-          style={{ gridTemplateColumns: `repeat(${columns}, minmax(0,1fr))` }}
-        >
+        <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${columns}, minmax(0,1fr))` }}>
           {Array.from({ length: columns }).map((_, i) => (
             <Skeleton key={i} className="h-3 w-20" />
           ))}
@@ -55,10 +47,7 @@ export function SkeletonTable({
       <div className="divide-y divide-border/40">
         {Array.from({ length: rows }).map((_, r) => (
           <div key={r} className="px-4 py-4">
-            <div
-              className="grid gap-4"
-              style={{ gridTemplateColumns: `repeat(${columns}, minmax(0,1fr))` }}
-            >
+            <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${columns}, minmax(0,1fr))` }}>
               {Array.from({ length: columns }).map((_, c) => (
                 <Skeleton key={c} className={cn("h-4", c === 0 ? "w-24" : "w-full max-w-[80%]")} />
               ))}
@@ -74,10 +63,7 @@ export function SkeletonCalendar({ days = 7, slots = 8 }: { days?: number; slots
   return (
     <div className="overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm">
       <div className="border-b border-border/60 bg-muted/40 px-4 py-3">
-        <div
-          className="grid gap-2"
-          style={{ gridTemplateColumns: `120px repeat(${days}, minmax(0,1fr))` }}
-        >
+        <div className="grid gap-2" style={{ gridTemplateColumns: `120px repeat(${days}, minmax(0,1fr))` }}>
           <Skeleton className="h-3 w-16" />
           {Array.from({ length: days }).map((_, i) => (
             <div key={i} className="space-y-1">
@@ -90,10 +76,7 @@ export function SkeletonCalendar({ days = 7, slots = 8 }: { days?: number; slots
       <div className="divide-y divide-border/40">
         {Array.from({ length: slots }).map((_, r) => (
           <div key={r} className="px-4 py-3">
-            <div
-              className="grid gap-2"
-              style={{ gridTemplateColumns: `120px repeat(${days}, minmax(0,1fr))` }}
-            >
+            <div className="grid gap-2" style={{ gridTemplateColumns: `120px repeat(${days}, minmax(0,1fr))` }}>
               <Skeleton className="h-4 w-24" />
               {Array.from({ length: days }).map((_, c) => (
                 <Skeleton key={c} className="h-9 rounded-lg" />

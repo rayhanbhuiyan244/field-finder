@@ -1,5 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
-import { listReviews, createReview, averageRating, type Review } from "@/services/reviewService";
+import {
+  listReviews,
+  createReview,
+  averageRating,
+  type Review,
+} from "@/services/reviewService";
 
 export function useReviews() {
   const [data, setData] = useState<Review[]>([]);
@@ -28,8 +33,8 @@ export function useReviews() {
     error,
     average: averageRating(data),
     refresh: load,
-    submitReview: async (bookingId: string, input: Parameters<typeof createReview>[1]) => {
-      await createReview(bookingId, input);
+    submitReview: async (input: Parameters<typeof createReview>[0]) => {
+      await createReview(input);
       await load();
     },
   };

@@ -1,20 +1,7 @@
 import * as React from "react";
 import { useFormContext, type FieldValues, type Path } from "react-hook-form";
-import {
-  FormField,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormDescription,
-  FormMessage,
-} from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage } from "@/components/ui/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export interface SelectFieldOption {
   label: string;
@@ -34,14 +21,8 @@ export interface SelectFieldProps<T extends FieldValues> {
 }
 
 export function SelectField<T extends FieldValues>({
-  name,
-  label,
-  placeholder = "Select…",
-  description,
-  options,
-  required,
-  disabled,
-  className,
+  name, label, placeholder = "Select…", description, options,
+  required, disabled, className,
 }: SelectFieldProps<T>) {
   const form = useFormContext<T>();
   return (
@@ -53,14 +34,14 @@ export function SelectField<T extends FieldValues>({
           {label && (
             <FormLabel>
               {label}
-              {required && (
-                <span aria-hidden className="ml-0.5 text-destructive">
-                  *
-                </span>
-              )}
+              {required && <span aria-hidden className="ml-0.5 text-destructive">*</span>}
             </FormLabel>
           )}
-          <Select onValueChange={field.onChange} value={field.value ?? ""} disabled={disabled}>
+          <Select
+            onValueChange={field.onChange}
+            value={field.value ?? ""}
+            disabled={disabled}
+          >
             <FormControl>
               <SelectTrigger aria-required={required || undefined}>
                 <SelectValue placeholder={placeholder} />

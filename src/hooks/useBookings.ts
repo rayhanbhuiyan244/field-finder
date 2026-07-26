@@ -5,8 +5,6 @@ import {
   listBookingsForDate,
   createBooking,
   updateBookingStatus,
-  confirmBooking,
-  completeBooking,
   cancelBooking,
   type Booking,
 } from "@/services/bookingService";
@@ -52,14 +50,6 @@ export function useBookings(scope: Scope = "mine") {
     createBooking,
     updateBookingStatus: async (...args: Parameters<typeof updateBookingStatus>) => {
       await updateBookingStatus(...args);
-      await load();
-    },
-    confirmBooking: async (id: string) => {
-      await confirmBooking(id);
-      await load();
-    },
-    completeBooking: async (id: string) => {
-      await completeBooking(id);
       await load();
     },
     cancelBooking: async (id: string) => {

@@ -93,15 +93,11 @@ export function Navbar() {
             <div className="mt-2 flex gap-2">
               {user ? (
                 <Button asChild variant="outline" size="sm" className="flex-1">
-                  <Link to={accountHref} onClick={() => setOpen(false)}>
-                    Account
-                  </Link>
+                  <Link to={accountHref} onClick={() => setOpen(false)}>Account</Link>
                 </Button>
               ) : (
                 <Button asChild variant="outline" size="sm" className="flex-1">
-                  <Link to="/login" onClick={() => setOpen(false)}>
-                    Login
-                  </Link>
+                  <Link to="/login" onClick={() => setOpen(false)}>Login</Link>
                 </Button>
               )}
               <Button
@@ -109,9 +105,7 @@ export function Navbar() {
                 size="sm"
                 className="flex-1 bg-accent text-accent-foreground hover:bg-accent/90"
               >
-                <Link to="/booking" onClick={() => setOpen(false)}>
-                  Book Now
-                </Link>
+                <Link to="/booking" onClick={() => setOpen(false)}>Book Now</Link>
               </Button>
             </div>
           </div>

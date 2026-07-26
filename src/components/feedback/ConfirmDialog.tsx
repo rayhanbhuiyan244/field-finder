@@ -21,20 +21,12 @@ export interface ConfirmDialogProps {
   variant?: "default" | "destructive";
   loading?: boolean;
   onConfirm: () => void | Promise<void>;
-  children?: React.ReactNode;
 }
 
 export function ConfirmDialog({
-  open,
-  onOpenChange,
-  title,
-  description,
-  confirmLabel = "Confirm",
-  cancelLabel = "Cancel",
-  variant = "default",
-  loading = false,
-  onConfirm,
-  children,
+  open, onOpenChange, title, description,
+  confirmLabel = "Confirm", cancelLabel = "Cancel",
+  variant = "default", loading = false, onConfirm,
 }: ConfirmDialogProps) {
   const [busy, setBusy] = React.useState(false);
   const isBusy = loading || busy;
@@ -57,7 +49,6 @@ export function ConfirmDialog({
           <AlertDialogTitle>{title}</AlertDialogTitle>
           {description && <AlertDialogDescription>{description}</AlertDialogDescription>}
         </AlertDialogHeader>
-        {children}
         <AlertDialogFooter>
           <AlertDialogCancel disabled={isBusy}>{cancelLabel}</AlertDialogCancel>
           <AlertDialogAction

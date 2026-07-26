@@ -8,4 +8,9 @@ export type { PricingRule } from "@/services/pricingService";
 export type { Review } from "@/services/reviewService";
 export type { GalleryImage, BusinessSettings } from "@/services/gallerySettingsService";
 export type { AppNotification } from "@/services/notificationService";
-export type { BookingStatus, PaymentStatus, SlotStatus, Role } from "@/constants";
+export type {
+  BookingStatus,
+  PaymentStatus,
+  SlotStatus,
+  Role,
+} from "@/constants";

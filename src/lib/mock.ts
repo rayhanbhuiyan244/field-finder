@@ -56,56 +56,16 @@ export interface NotificationItem {
 }
 
 const NAMES = [
-  "Rakib Hasan",
-  "Tanvir Ahmed",
-  "Sakib Rahman",
-  "Mehedi Hasan",
-  "Arif Hossain",
-  "Nayeem Islam",
-  "Shakib Al Amin",
-  "Rifat Chowdhury",
-  "Fahim Kabir",
-  "Tousif Mahmud",
-  "Sadman Sakib",
-  "Rayhan Uddin",
-  "Sajid Karim",
-  "Nafis Iqbal",
-  "Ashik Reza",
-  "Mahin Alam",
-  "Rifat Khan",
-  "Tahmid Bhuiyan",
-  "Sabbir Ahmed",
-  "Naimul Haque",
-  "Nusrat Jahan",
-  "Tasnim Akter",
-  "Farhana Rahman",
-  "Sadia Islam",
-  "Marium Khatun",
-  "Rumana Parveen",
-  "Sumaiya Akter",
-  "Jarin Tasnim",
-  "Tahmina Begum",
-  "Nabila Haque",
-  "Imran Hossain",
-  "Faisal Ahmed",
-  "Kamrul Islam",
-  "Shahriar Kabir",
-  "Tarek Aziz",
-  "Anisur Rahman",
-  "Zahidul Islam",
-  "Mizanur Rahman",
-  "Nazmul Huda",
-  "Ashraful Alam",
-  "Golam Mostofa",
-  "Mahbub Alam",
-  "Parvez Rana",
-  "Rashedul Hasan",
-  "Saiful Islam",
-  "Wasim Akram",
-  "Abdullah Al Mamun",
-  "Ayan Chowdhury",
-  "Rakibul Hasan",
-  "Sohel Rana",
+  "Rakib Hasan", "Tanvir Ahmed", "Sakib Rahman", "Mehedi Hasan", "Arif Hossain",
+  "Nayeem Islam", "Shakib Al Amin", "Rifat Chowdhury", "Fahim Kabir", "Tousif Mahmud",
+  "Sadman Sakib", "Rayhan Uddin", "Sajid Karim", "Nafis Iqbal", "Ashik Reza",
+  "Mahin Alam", "Rifat Khan", "Tahmid Bhuiyan", "Sabbir Ahmed", "Naimul Haque",
+  "Nusrat Jahan", "Tasnim Akter", "Farhana Rahman", "Sadia Islam", "Marium Khatun",
+  "Rumana Parveen", "Sumaiya Akter", "Jarin Tasnim", "Tahmina Begum", "Nabila Haque",
+  "Imran Hossain", "Faisal Ahmed", "Kamrul Islam", "Shahriar Kabir", "Tarek Aziz",
+  "Anisur Rahman", "Zahidul Islam", "Mizanur Rahman", "Nazmul Huda", "Ashraful Alam",
+  "Golam Mostofa", "Mahbub Alam", "Parvez Rana", "Rashedul Hasan", "Saiful Islam",
+  "Wasim Akram", "Abdullah Al Mamun", "Ayan Chowdhury", "Rakibul Hasan", "Sohel Rana",
 ];
 
 function seededRandom(seed: number) {
@@ -117,7 +77,7 @@ function seededRandom(seed: number) {
 }
 
 const rand = seededRandom(42);
-const pick = <T>(arr: T[]) => arr[Math.floor(rand() * arr.length)];
+const pick = <T,>(arr: T[]) => arr[Math.floor(rand() * arr.length)];
 
 function fmtDate(d: Date) {
   return toISODate(d);
@@ -130,18 +90,9 @@ function addDays(d: Date, days: number) {
 }
 
 export const TIME_SLOTS = [
-  "06:00 - 07:00",
-  "07:00 - 08:00",
-  "08:00 - 09:00",
-  "09:00 - 10:00",
-  "10:00 - 11:00",
-  "11:00 - 12:00",
-  "16:00 - 17:00",
-  "17:00 - 18:00",
-  "18:00 - 19:00",
-  "19:00 - 20:00",
-  "20:00 - 21:00",
-  "21:00 - 22:00",
+  "06:00 - 07:00", "07:00 - 08:00", "08:00 - 09:00", "09:00 - 10:00",
+  "10:00 - 11:00", "11:00 - 12:00", "16:00 - 17:00", "17:00 - 18:00",
+  "18:00 - 19:00", "19:00 - 20:00", "20:00 - 21:00", "21:00 - 22:00",
   "22:00 - 23:00",
 ];
 
@@ -165,8 +116,9 @@ export const bookings: Booking[] = Array.from({ length: 30 }).map((_, i) => {
   const date = addDays(new Date(), daysOffset);
   const time = pick(TIME_SLOTS);
   const price = pick([1200, 1500, 1800, 2000, 2500]);
-  const status: BookingStatus =
-    daysOffset < 0 ? (rand() > 0.15 ? "completed" : "cancelled") : pick(STATUSES.slice(0, 2));
+  const status: BookingStatus = daysOffset < 0
+    ? (rand() > 0.15 ? "completed" : "cancelled")
+    : pick(STATUSES.slice(0, 2));
   return {
     id: `BK-${2401 + i}`,
     customer: c.name,
@@ -181,105 +133,26 @@ export const bookings: Booking[] = Array.from({ length: 30 }).map((_, i) => {
 });
 
 export const reviews: Review[] = [
-  {
-    id: "r1",
-    name: "Rakib Hasan",
-    initials: "RH",
-    rating: 5,
-    date: "2 days ago",
-    comment:
-      "Top quality turf, floodlights are excellent for night matches. Booking took 20 seconds.",
-  },
-  {
-    id: "r2",
-    name: "Nusrat Jahan",
-    initials: "NJ",
-    rating: 5,
-    date: "1 week ago",
-    comment: "Clean changing rooms and friendly staff. The pitch drains really well after rain.",
-  },
-  {
-    id: "r3",
-    name: "Tanvir Ahmed",
-    initials: "TA",
-    rating: 4,
-    date: "2 weeks ago",
-    comment: "Great value for money on weekday slots. Parking gets tight on Fridays.",
-  },
-  {
-    id: "r4",
-    name: "Sadia Islam",
-    initials: "SI",
-    rating: 5,
-    date: "3 weeks ago",
-    comment: "Cafeteria is a nice touch. We come here every Friday now.",
-  },
-  {
-    id: "r5",
-    name: "Shakib Al Amin",
-    initials: "SA",
-    rating: 5,
-    date: "1 month ago",
-    comment: "Best 5-a-side turf in the area. Surface feels premium under the studs.",
-  },
-  {
-    id: "r6",
-    name: "Tasnim Akter",
-    initials: "TA",
-    rating: 4,
-    date: "1 month ago",
-    comment: "Booking system is smooth. Would love an app version too!",
-  },
+  { id: "r1", name: "Rakib Hasan", initials: "RH", rating: 5, date: "2 days ago", comment: "Top quality turf, floodlights are excellent for night matches. Booking took 20 seconds." },
+  { id: "r2", name: "Nusrat Jahan", initials: "NJ", rating: 5, date: "1 week ago", comment: "Clean changing rooms and friendly staff. The pitch drains really well after rain." },
+  { id: "r3", name: "Tanvir Ahmed", initials: "TA", rating: 4, date: "2 weeks ago", comment: "Great value for money on weekday slots. Parking gets tight on Fridays." },
+  { id: "r4", name: "Sadia Islam", initials: "SI", rating: 5, date: "3 weeks ago", comment: "Cafeteria is a nice touch. We come here every Friday now." },
+  { id: "r5", name: "Shakib Al Amin", initials: "SA", rating: 5, date: "1 month ago", comment: "Best 5-a-side turf in the area. Surface feels premium under the studs." },
+  { id: "r6", name: "Tasnim Akter", initials: "TA", rating: 4, date: "1 month ago", comment: "Booking system is smooth. Would love an app version too!" },
 ];
 
 export const pricingRules: PricingRule[] = [
   { id: "p1", label: "Weekday", window: "Mon - Fri, 6 AM - 4 PM", price: 1200, note: "Best value" },
   { id: "p2", label: "Weekend", window: "Sat - Sun, all day", price: 1800, note: "Most popular" },
-  {
-    id: "p3",
-    label: "Peak Hours",
-    window: "Daily, 7 PM - 10 PM",
-    price: 2000,
-    note: "Premium slot",
-  },
-  {
-    id: "p4",
-    label: "Night Slot",
-    window: "Daily, 10 PM - 12 AM",
-    price: 1500,
-    note: "Floodlights included",
-  },
+  { id: "p3", label: "Peak Hours", window: "Daily, 7 PM - 10 PM", price: 2000, note: "Premium slot" },
+  { id: "p4", label: "Night Slot", window: "Daily, 10 PM - 12 AM", price: 1500, note: "Floodlights included" },
 ];
 
 export const notifications: NotificationItem[] = [
-  {
-    id: "n1",
-    title: "Booking confirmed",
-    body: "Your slot on Fri 7-8 PM is confirmed.",
-    time: "2h ago",
-    unread: true,
-  },
-  {
-    id: "n2",
-    title: "Payment received",
-    body: "₹1,800 received for BK-2418.",
-    time: "1d ago",
-    unread: true,
-  },
-  {
-    id: "n3",
-    title: "Reminder",
-    body: "Match tomorrow at 8 PM. Bring your kit.",
-    time: "1d ago",
-    unread: false,
-  },
-  {
-    id: "n4",
-    title: "New offer",
-    body: "20% off weekday morning slots this month.",
-    time: "3d ago",
-    unread: false,
-  },
+  { id: "n1", title: "Booking confirmed", body: "Your slot on Fri 7-8 PM is confirmed.", time: "2h ago", unread: true },
+  { id: "n2", title: "Payment received", body: "₹1,800 received for BK-2418.", time: "1d ago", unread: true },
+  { id: "n3", title: "Reminder", body: "Match tomorrow at 8 PM. Bring your kit.", time: "1d ago", unread: false },
+  { id: "n4", title: "New offer", body: "20% off weekday morning slots this month.", time: "3d ago", unread: false },
 ];
 
 // Revenue for last 12 weeks (mock)

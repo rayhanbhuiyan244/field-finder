@@ -5,8 +5,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { listTimeSlots } from "@/services/timeslotService";
-import { listBookedSlotsForDate } from "@/services/bookingService";
-import { listMaintenanceBlocksForDate, isSlotBlocked } from "@/services/maintenanceService";
+import { listBookingsForDate } from "@/services/bookingService";
 import { SkeletonCalendar, ErrorState } from "@/components/feedback";
 
 export const Route = createFileRoute("/availability")({
@@ -38,26 +37,14 @@ function Availability() {
       Promise.all(
         days.map(async (d) => {
           const key = toISODate(d);
-          const [booked, blocks] = await Promise.all([
-            listBookedSlotsForDate(key),
-            listMaintenanceBlocksForDate(key),
-          ]);
-          return [key, booked, blocks] as const;
+          const rows = await listBookingsForDate(key);
+          return [key, new Set(rows.filter((r) => r.bookingStatus !== "cancelled").map((r) => r.timeSlot))] as const;
         }),
       ),
     ])
       .then(([ts, entries]) => {
-        const slotLabels = ts.map((x) => x.label);
-        setSlots(slotLabels);
-        setBookedByDate(
-          Object.fromEntries(
-            entries.map(([key, booked, blocks]) => {
-              const merged = new Set(booked);
-              slotLabels.filter((t) => isSlotBlocked(t, blocks)).forEach((t) => merged.add(t));
-              return [key, merged] as const;
-            }),
-          ),
-        );
+        setSlots(ts.map((x) => x.label));
+        setBookedByDate(Object.fromEntries(entries));
       })
       .catch(() => setError(true))
       .finally(() => setLoading(false));
@@ -77,55 +64,43 @@ function Availability() {
           {loading && <SkeletonCalendar days={7} slots={8} />}
           {!loading && error && <ErrorState variant="network" onRetry={load} />}
           {!loading && !error && (
-            <div className="overflow-x-auto rounded-2xl border border-border/60 bg-card shadow-[0_2px_8px_-4px_rgba(15,23,42,0.06)]">
-              <table className="w-full min-w-[900px] text-sm">
-                <thead>
-                  <tr className="border-b border-border/60 text-left">
-                    <th className="p-4 text-xs uppercase tracking-wider text-muted-foreground">
-                      Time
-                    </th>
-                    {days.map((d) => (
-                      <th
-                        key={d.toISOString()}
-                        className="p-4 text-xs uppercase tracking-wider text-muted-foreground"
-                      >
-                        <div className="font-semibold text-foreground">
-                          {d.toLocaleDateString(undefined, { weekday: "short" })}
+          <div className="overflow-x-auto rounded-2xl border border-border/60 bg-card shadow-[0_2px_8px_-4px_rgba(15,23,42,0.06)]">
+          <table className="w-full min-w-[900px] text-sm">
+            <thead>
+              <tr className="border-b border-border/60 text-left">
+                <th className="p-4 text-xs uppercase tracking-wider text-muted-foreground">Time</th>
+                {days.map((d) => (
+                  <th key={d.toISOString()} className="p-4 text-xs uppercase tracking-wider text-muted-foreground">
+                    <div className="font-semibold text-foreground">{d.toLocaleDateString(undefined, { weekday: "short" })}</div>
+                    <div className="text-muted-foreground">{d.toLocaleDateString(undefined, { day: "numeric", month: "short" })}</div>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {slots.map((t) => (
+                <tr key={t} className="border-b border-border/40 last:border-0">
+                  <td className="p-3 font-medium">{t}</td>
+                  {days.map((d) => {
+                    const key = toISODate(d);
+                    const status = bookedByDate[key]?.has(t) ? "booked" : "available";
+                    return (
+                      <td key={d.toISOString()} className="p-2">
+                        <div className={cn(
+                          "h-9 rounded-lg text-xs font-medium grid place-items-center transition-colors",
+                          status === "available" && "bg-secondary/15 text-secondary hover:bg-secondary/25",
+                          status === "booked" && "bg-destructive/10 text-destructive",
+                        )}>
+                          {status === "available" ? "Open" : "Booked"}
                         </div>
-                        <div className="text-muted-foreground">
-                          {d.toLocaleDateString(undefined, { day: "numeric", month: "short" })}
-                        </div>
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {slots.map((t) => (
-                    <tr key={t} className="border-b border-border/40 last:border-0">
-                      <td className="p-3 font-medium">{t}</td>
-                      {days.map((d) => {
-                        const key = toISODate(d);
-                        const status = bookedByDate[key]?.has(t) ? "booked" : "available";
-                        return (
-                          <td key={d.toISOString()} className="p-2">
-                            <div
-                              className={cn(
-                                "h-9 rounded-lg text-xs font-medium grid place-items-center transition-colors",
-                                status === "available" &&
-                                  "bg-secondary/15 text-secondary hover:bg-secondary/25",
-                                status === "booked" && "bg-destructive/10 text-destructive",
-                              )}
-                            >
-                              {status === "available" ? "Open" : "Booked"}
-                            </div>
-                          </td>
-                        );
-                      })}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          </div>
           )}
         </div>
 

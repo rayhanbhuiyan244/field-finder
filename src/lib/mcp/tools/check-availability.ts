@@ -17,8 +17,12 @@ export default defineTool({
     const { collection, getDocs, orderBy, query, where } = await import("firebase/firestore");
     const { db } = await import("@/firebase/config");
 
-    const slotsSnap = await getDocs(query(collection(db, "timeslots"), orderBy("order", "asc")));
-    const slots = slotsSnap.docs.map((d) => (d.data() as { label: string }).label);
+    const slotsSnap = await getDocs(
+      query(collection(db, "timeslots"), orderBy("order", "asc")),
+    );
+    const slots = slotsSnap.docs.map(
+      (d) => (d.data() as { label: string }).label,
+    );
 
     const bookingsSnap = await getDocs(
       query(collection(db, "bookings"), where("bookingDate", "==", date)),

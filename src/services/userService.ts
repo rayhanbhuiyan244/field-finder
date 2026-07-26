@@ -56,9 +56,3 @@ export async function listCustomers(): Promise<UserProfile[]> {
   const snap = await getDocs(query(collection(db, "users"), where("role", "==", "customer")));
   return snap.docs.map((d) => ({ uid: d.id, ...(d.data() as Omit<UserProfile, "uid">) }));
 }
-
-/** Single-owner v1: looks up the one account with role "owner", used to route owner-facing notifications. */
-export async function getOwnerUserId(): Promise<string | null> {
-  const snap = await getDocs(query(collection(db, "users"), where("role", "==", "owner")));
-  return snap.empty ? null : snap.docs[0].id;
-}

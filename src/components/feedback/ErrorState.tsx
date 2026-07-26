@@ -5,10 +5,7 @@ import { cn } from "@/lib/utils";
 
 export type ErrorVariant = "generic" | "network" | "unauthorized" | "not-found";
 
-const VARIANTS: Record<
-  ErrorVariant,
-  { icon: React.ComponentType<{ className?: string }>; title: string; description: string }
-> = {
+const VARIANTS: Record<ErrorVariant, { icon: React.ComponentType<{ className?: string }>; title: string; description: string }> = {
   generic: {
     icon: AlertTriangle,
     title: "Something went wrong",

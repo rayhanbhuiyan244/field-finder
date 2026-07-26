@@ -26,7 +26,10 @@ export function formatDate(
   return new Intl.DateTimeFormat(locale, opts).format(d);
 }
 
-export function formatTime(input: string | number | Date, locale: string = "en-GB"): string {
+export function formatTime(
+  input: string | number | Date,
+  locale: string = "en-GB",
+): string {
   const d = input instanceof Date ? input : new Date(input);
   if (isNaN(d.getTime())) return String(input);
   return new Intl.DateTimeFormat(locale, {
@@ -43,18 +46,4 @@ export function toISODate(d: Date = new Date()): string {
   const m = String(d.getMonth() + 1).padStart(2, "0");
   const day = String(d.getDate()).padStart(2, "0");
   return `${y}-${m}-${day}`;
-}
-
-/**
- * Parses a "YYYY-MM-DD" date + "HH:MM - HH:MM" time slot into the local Date
- * the slot starts at. Returns null if either input doesn't match the
- * expected shape (defensive — slot labels are free text elsewhere in the app).
- */
-export function slotStartDate(bookingDate: string, timeSlot: string): Date | null {
-  const dateMatch = /^(\d{4})-(\d{2})-(\d{2})$/.exec(bookingDate);
-  const timeMatch = /^(\d{2}):(\d{2})/.exec(timeSlot);
-  if (!dateMatch || !timeMatch) return null;
-  const [, y, m, d] = dateMatch;
-  const [, hh, mm] = timeMatch;
-  return new Date(Number(y), Number(m) - 1, Number(d), Number(hh), Number(mm));
 }

@@ -72,12 +72,8 @@ function Login() {
             </Button>
           </form>
           <div className="mt-6 flex items-center justify-between text-sm">
-            <Link to="/forgot-password" className="text-muted-foreground hover:text-foreground">
-              Forgot password?
-            </Link>
-            <Link to="/register" className="font-medium text-primary">
-              Create account
-            </Link>
+            <Link to="/forgot-password" className="text-muted-foreground hover:text-foreground">Forgot password?</Link>
+            <Link to="/register" className="font-medium text-primary">Create account</Link>
           </div>
           <p className="mt-6 rounded-xl bg-muted/60 p-3 text-xs text-muted-foreground">
             Powered by Firebase Authentication.

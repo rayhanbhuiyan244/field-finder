@@ -31,15 +31,13 @@ export function EmptyState({
       </div>
       <div className="max-w-sm space-y-1">
         <h3 className="text-base font-semibold">{title}</h3>
-        {description && <p className="text-sm text-muted-foreground">{description}</p>}
+        {description && (
+          <p className="text-sm text-muted-foreground">{description}</p>
+        )}
       </div>
       {action &&
         (action.href ? (
-          <Button
-            asChild
-            size="sm"
-            className="mt-2 bg-accent text-accent-foreground hover:bg-accent/90"
-          >
+          <Button asChild size="sm" className="mt-2 bg-accent text-accent-foreground hover:bg-accent/90">
             <a href={action.href}>{action.label}</a>
           </Button>
         ) : (

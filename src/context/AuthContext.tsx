@@ -32,6 +32,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Fire seed once at startup (no-op if collections already have data).
+    seedFirestoreOnce();
     const unsub = subscribeToAuth(async (u) => {
       setUser(u);
       if (u) {
@@ -48,17 +50,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
     return () => unsub();
   }, []);
-
-  useEffect(() => {
-    // Seeding writes to config collections (timeslots, pricing, gallery,
-    // settings) that Security Rules restrict to the owner. Firing this for
-    // every anonymous visitor would require those collections to be
-    // publicly writable, which we don't want — so only the owner's own
-    // first login ever triggers it (no-op if data already exists).
-    if (profile?.role === "owner") {
-      seedFirestoreOnce();
-    }
-  }, [profile]);
 
   const refreshProfile = useCallback(async () => {
     if (!user) return;

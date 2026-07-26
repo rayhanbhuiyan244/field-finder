@@ -2,14 +2,7 @@ import * as React from "react";
 import { useFormContext, type FieldValues, type Path } from "react-hook-form";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import {
-  FormField,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormDescription,
-  FormMessage,
-} from "@/components/ui/form";
+import { FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -27,13 +20,7 @@ export interface DateFieldProps<T extends FieldValues> {
 
 // Value stored as YYYY-MM-DD string.
 export function DateField<T extends FieldValues>({
-  name,
-  label,
-  description,
-  placeholder = "Pick a date",
-  required,
-  disabled,
-  className,
+  name, label, description, placeholder = "Pick a date", required, disabled, className,
 }: DateFieldProps<T>) {
   const form = useFormContext<T>();
   return (
@@ -47,11 +34,7 @@ export function DateField<T extends FieldValues>({
             {label && (
               <FormLabel>
                 {label}
-                {required && (
-                  <span aria-hidden className="ml-0.5 text-destructive">
-                    *
-                  </span>
-                )}
+                {required && <span aria-hidden className="ml-0.5 text-destructive">*</span>}
               </FormLabel>
             )}
             <Popover>

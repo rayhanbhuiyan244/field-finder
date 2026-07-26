@@ -8,13 +8,14 @@ import {
   type User,
 } from "firebase/auth";
 import { auth } from "@/firebase/config";
-import { createUserProfile, getUserProfile } from "./userService";
+import { createUserProfile, getUserProfile, type UserRole } from "./userService";
 
 export interface RegisterInput {
   fullName: string;
   email: string;
   phone: string;
   password: string;
+  role: UserRole;
 }
 
 export async function register(input: RegisterInput) {
@@ -24,10 +25,7 @@ export async function register(input: RegisterInput) {
     fullName: input.fullName,
     email: input.email,
     phone: input.phone,
-    // Public sign-up can only ever create customers. The single owner
-    // account for this turf is provisioned manually (see deployment notes) —
-    // never through this form. Security Rules enforce this server-side too.
-    role: "customer",
+    role: input.role,
   });
   return cred.user;
 }
