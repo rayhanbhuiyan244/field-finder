@@ -38,7 +38,10 @@ function Availability() {
         days.map(async (d) => {
           const key = toISODate(d);
           const rows = await listBookingsForDate(key);
-          return [key, new Set(rows.filter((r) => r.bookingStatus !== "cancelled").map((r) => r.timeSlot))] as const;
+          return [
+            key,
+            new Set(rows.filter((r) => r.bookingStatus !== "cancelled").map((r) => r.timeSlot)),
+          ] as const;
         }),
       ),
     ])
@@ -64,43 +67,55 @@ function Availability() {
           {loading && <SkeletonCalendar days={7} slots={8} />}
           {!loading && error && <ErrorState variant="network" onRetry={load} />}
           {!loading && !error && (
-          <div className="overflow-x-auto rounded-2xl border border-border/60 bg-card shadow-[0_2px_8px_-4px_rgba(15,23,42,0.06)]">
-          <table className="w-full min-w-[900px] text-sm">
-            <thead>
-              <tr className="border-b border-border/60 text-left">
-                <th className="p-4 text-xs uppercase tracking-wider text-muted-foreground">Time</th>
-                {days.map((d) => (
-                  <th key={d.toISOString()} className="p-4 text-xs uppercase tracking-wider text-muted-foreground">
-                    <div className="font-semibold text-foreground">{d.toLocaleDateString(undefined, { weekday: "short" })}</div>
-                    <div className="text-muted-foreground">{d.toLocaleDateString(undefined, { day: "numeric", month: "short" })}</div>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {slots.map((t) => (
-                <tr key={t} className="border-b border-border/40 last:border-0">
-                  <td className="p-3 font-medium">{t}</td>
-                  {days.map((d) => {
-                    const key = toISODate(d);
-                    const status = bookedByDate[key]?.has(t) ? "booked" : "available";
-                    return (
-                      <td key={d.toISOString()} className="p-2">
-                        <div className={cn(
-                          "h-9 rounded-lg text-xs font-medium grid place-items-center transition-colors",
-                          status === "available" && "bg-secondary/15 text-secondary hover:bg-secondary/25",
-                          status === "booked" && "bg-destructive/10 text-destructive",
-                        )}>
-                          {status === "available" ? "Open" : "Booked"}
+            <div className="overflow-x-auto rounded-2xl border border-border/60 bg-card shadow-[0_2px_8px_-4px_rgba(15,23,42,0.06)]">
+              <table className="w-full min-w-[900px] text-sm">
+                <thead>
+                  <tr className="border-b border-border/60 text-left">
+                    <th className="p-4 text-xs uppercase tracking-wider text-muted-foreground">
+                      Time
+                    </th>
+                    {days.map((d) => (
+                      <th
+                        key={d.toISOString()}
+                        className="p-4 text-xs uppercase tracking-wider text-muted-foreground"
+                      >
+                        <div className="font-semibold text-foreground">
+                          {d.toLocaleDateString(undefined, { weekday: "short" })}
                         </div>
-                      </td>
-                    );
-                  })}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          </div>
+                        <div className="text-muted-foreground">
+                          {d.toLocaleDateString(undefined, { day: "numeric", month: "short" })}
+                        </div>
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {slots.map((t) => (
+                    <tr key={t} className="border-b border-border/40 last:border-0">
+                      <td className="p-3 font-medium">{t}</td>
+                      {days.map((d) => {
+                        const key = toISODate(d);
+                        const status = bookedByDate[key]?.has(t) ? "booked" : "available";
+                        return (
+                          <td key={d.toISOString()} className="p-2">
+                            <div
+                              className={cn(
+                                "h-9 rounded-lg text-xs font-medium grid place-items-center transition-colors",
+                                status === "available" &&
+                                  "bg-secondary/15 text-secondary hover:bg-secondary/25",
+                                status === "booked" && "bg-destructive/10 text-destructive",
+                              )}
+                            >
+                              {status === "available" ? "Open" : "Booked"}
+                            </div>
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
 

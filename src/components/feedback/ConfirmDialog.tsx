@@ -24,9 +24,15 @@ export interface ConfirmDialogProps {
 }
 
 export function ConfirmDialog({
-  open, onOpenChange, title, description,
-  confirmLabel = "Confirm", cancelLabel = "Cancel",
-  variant = "default", loading = false, onConfirm,
+  open,
+  onOpenChange,
+  title,
+  description,
+  confirmLabel = "Confirm",
+  cancelLabel = "Cancel",
+  variant = "default",
+  loading = false,
+  onConfirm,
 }: ConfirmDialogProps) {
   const [busy, setBusy] = React.useState(false);
   const isBusy = loading || busy;

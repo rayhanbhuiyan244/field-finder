@@ -47,23 +47,48 @@ function Register() {
       <div className="mx-auto grid min-h-[70vh] w-full max-w-md place-items-center px-6 py-16">
         <div className="w-full rounded-2xl border border-border/60 bg-card p-8 shadow-[0_4px_20px_-8px_rgba(15,23,42,0.15)]">
           <h1 className="text-2xl font-bold tracking-tight">Create your account</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Book slots, review, and manage your matches.</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Book slots, review, and manage your matches.
+          </p>
           <form onSubmit={onSubmit} className="mt-6 space-y-4">
             <div className="space-y-2">
               <Label>Full name</Label>
-              <Input required value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Rakib Hasan" />
+              <Input
+                required
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                placeholder="Rakib Hasan"
+              />
             </div>
             <div className="space-y-2">
               <Label>Email</Label>
-              <Input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@mail.com" />
+              <Input
+                required
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@mail.com"
+              />
             </div>
             <div className="space-y-2">
               <Label>Phone</Label>
-              <Input required value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+880 1..." />
+              <Input
+                required
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="+880 1..."
+              />
             </div>
             <div className="space-y-2">
               <Label>Password</Label>
-              <Input required type="password" minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="At least 6 characters" />
+              <Input
+                required
+                type="password"
+                minLength={6}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="At least 6 characters"
+              />
             </div>
             <div className="space-y-2">
               <Label>Account type</Label>
@@ -84,13 +109,19 @@ function Register() {
                 ))}
               </div>
             </div>
-            <Button type="submit" disabled={submitting} className="h-11 w-full bg-accent text-accent-foreground hover:bg-accent/90">
+            <Button
+              type="submit"
+              disabled={submitting}
+              className="h-11 w-full bg-accent text-accent-foreground hover:bg-accent/90"
+            >
               {submitting ? "Creating account…" : "Create account"}
             </Button>
           </form>
           <div className="mt-6 text-sm text-center">
             <span className="text-muted-foreground">Already have an account? </span>
-            <Link to="/login" className="font-medium text-primary">Sign in</Link>
+            <Link to="/login" className="font-medium text-primary">
+              Sign in
+            </Link>
           </div>
         </div>
       </div>

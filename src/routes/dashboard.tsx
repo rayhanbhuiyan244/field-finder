@@ -1,8 +1,17 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import {
-  LayoutDashboard, CalendarDays, User, Bell, Settings, LogOut, Trophy,
-  Clock, Repeat, ChevronRight, Home,
+  LayoutDashboard,
+  CalendarDays,
+  User,
+  Bell,
+  Settings,
+  LogOut,
+  Trophy,
+  Clock,
+  Repeat,
+  ChevronRight,
+  Home,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -74,15 +83,24 @@ function Dashboard() {
     navigate({ to: "/" });
   }
 
-  const initials = (profile?.fullName || "U").split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase();
-  const upcoming = myBookings.find((b) => b.bookingStatus === "confirmed" || b.bookingStatus === "pending");
+  const initials = (profile?.fullName || "U")
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+  const upcoming = myBookings.find(
+    (b) => b.bookingStatus === "confirmed" || b.bookingStatus === "pending",
+  );
 
   return (
     <div className="flex min-h-screen bg-muted/40">
       {/* Sidebar */}
       <aside className="hidden w-64 shrink-0 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground md:flex">
         <div className="flex h-16 items-center gap-2 px-6 border-b border-sidebar-border">
-          <span className="grid h-9 w-9 place-items-center rounded-xl bg-accent text-accent-foreground font-black">K</span>
+          <span className="grid h-9 w-9 place-items-center rounded-xl bg-accent text-accent-foreground font-black">
+            K
+          </span>
           <span className="font-bold">Kickoff Arena</span>
         </div>
         <nav className="flex-1 space-y-1 p-4">
@@ -116,12 +134,18 @@ function Dashboard() {
         {/* Topbar */}
         <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b border-border/60 bg-card px-6">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Link to="/" className="hover:text-foreground flex items-center gap-1"><Home className="h-4 w-4" /> Home</Link>
+            <Link to="/" className="hover:text-foreground flex items-center gap-1">
+              <Home className="h-4 w-4" /> Home
+            </Link>
             <ChevronRight className="h-3.5 w-3.5" />
             <span className="capitalize text-foreground font-medium">{section}</span>
           </div>
           <div className="flex items-center gap-3">
-            <Button asChild size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90">
+            <Button
+              asChild
+              size="sm"
+              className="bg-accent text-accent-foreground hover:bg-accent/90"
+            >
               <Link to="/booking">+ New Booking</Link>
             </Button>
             {profile?.photoURL ? (
@@ -136,31 +160,59 @@ function Dashboard() {
 
         <div className="flex-1 p-6 lg:p-8 space-y-6">
           {loading && section === "dashboard" && <SkeletonDashboard />}
-          {loading && (section === "bookings") && <SkeletonTable rows={6} columns={6} />}
+          {loading && section === "bookings" && <SkeletonTable rows={6} columns={6} />}
           {!loading && section === "dashboard" && (
             <>
               <div>
-                <h1 className="text-2xl font-bold tracking-tight">Welcome back, {profile?.fullName?.split(" ")[0] ?? "player"} 👋</h1>
+                <h1 className="text-2xl font-bold tracking-tight">
+                  Welcome back, {profile?.fullName?.split(" ")[0] ?? "player"} 👋
+                </h1>
                 <p className="text-sm text-muted-foreground">Here's what's on your schedule.</p>
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <StatCard
                   label="Upcoming Match"
-                  value={upcoming ? `${upcoming.bookingDate} · ${upcoming.timeSlot.split(" ")[0]}` : "—"}
+                  value={
+                    upcoming ? `${upcoming.bookingDate} · ${upcoming.timeSlot.split(" ")[0]}` : "—"
+                  }
                   icon={CalendarDays}
                   tone="accent"
                   trend={upcoming ? "Confirmed" : "No upcoming"}
                 />
-                <StatCard label="Total Matches" value={myBookings.filter((b) => b.bookingStatus === "completed").length} icon={Trophy} tone="primary" />
-                <StatCard label="Active Bookings" value={myBookings.filter((b) => b.bookingStatus !== "cancelled" && b.bookingStatus !== "completed").length} icon={Clock} tone="secondary" />
-                <StatCard label="Booking History" value={myBookings.length} icon={Repeat} tone="warning" />
+                <StatCard
+                  label="Total Matches"
+                  value={myBookings.filter((b) => b.bookingStatus === "completed").length}
+                  icon={Trophy}
+                  tone="primary"
+                />
+                <StatCard
+                  label="Active Bookings"
+                  value={
+                    myBookings.filter(
+                      (b) => b.bookingStatus !== "cancelled" && b.bookingStatus !== "completed",
+                    ).length
+                  }
+                  icon={Clock}
+                  tone="secondary"
+                />
+                <StatCard
+                  label="Booking History"
+                  value={myBookings.length}
+                  icon={Repeat}
+                  tone="warning"
+                />
               </div>
 
               <div className="rounded-2xl border border-border/60 bg-card shadow-sm">
                 <div className="flex items-center justify-between border-b border-border/60 p-5">
                   <h2 className="font-semibold">Recent bookings</h2>
-                  <button onClick={() => setSection("bookings")} className="text-sm font-medium text-primary hover:underline">View all</button>
+                  <button
+                    onClick={() => setSection("bookings")}
+                    className="text-sm font-medium text-primary hover:underline"
+                  >
+                    View all
+                  </button>
                 </div>
                 <BookingTable rows={myBookings.slice(0, 5)} />
               </div>
@@ -172,7 +224,9 @@ function Dashboard() {
               <div className="flex items-center justify-between border-b border-border/60 p-5">
                 <div>
                   <h2 className="font-semibold">My bookings</h2>
-                  <p className="text-sm text-muted-foreground">All your past and upcoming matches.</p>
+                  <p className="text-sm text-muted-foreground">
+                    All your past and upcoming matches.
+                  </p>
                 </div>
               </div>
               <BookingTable rows={myBookings} />
@@ -183,32 +237,39 @@ function Dashboard() {
             <ProfileForm me={profile} onSaved={refreshProfile} />
           )}
 
-          {section === "notifications" && (
-            notifs.length === 0 ? (
+          {section === "notifications" &&
+            (notifs.length === 0 ? (
               <EmptyState
                 icon={BellOff}
                 title="No notifications"
                 description="Booking updates, reminders and offers will show up here."
               />
             ) : (
-            <div className="rounded-2xl border border-border/60 bg-card p-2 shadow-sm">
-              {notifs.map((n) => (
-                <div key={n.id} className="flex items-start gap-4 border-b border-border/60 p-4 last:border-0">
-                  <div className={cn("grid h-10 w-10 place-items-center rounded-full", n.unread ? "bg-accent/15 text-accent" : "bg-muted text-muted-foreground")}>
-                    <Bell className="h-4 w-4" />
+              <div className="rounded-2xl border border-border/60 bg-card p-2 shadow-sm">
+                {notifs.map((n) => (
+                  <div
+                    key={n.id}
+                    className="flex items-start gap-4 border-b border-border/60 p-4 last:border-0"
+                  >
+                    <div
+                      className={cn(
+                        "grid h-10 w-10 place-items-center rounded-full",
+                        n.unread ? "bg-accent/15 text-accent" : "bg-muted text-muted-foreground",
+                      )}
+                    >
+                      <Bell className="h-4 w-4" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-semibold">{n.title}</p>
+                      <p className="text-sm text-muted-foreground">{n.body}</p>
+                    </div>
+                    <p className="text-xs text-muted-foreground whitespace-nowrap">
+                      {n.createdAt ? new Date(n.createdAt.seconds * 1000).toLocaleDateString() : ""}
+                    </p>
                   </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-semibold">{n.title}</p>
-                    <p className="text-sm text-muted-foreground">{n.body}</p>
-                  </div>
-                  <p className="text-xs text-muted-foreground whitespace-nowrap">
-                    {n.createdAt ? new Date(n.createdAt.seconds * 1000).toLocaleDateString() : ""}
-                  </p>
-                </div>
-              ))}
-            </div>
-            )
-          )}
+                ))}
+              </div>
+            ))}
 
           {section === "settings" && <SettingsPanel />}
         </div>
@@ -249,9 +310,13 @@ function BookingTable({ rows }: { rows: Booking[] }) {
               <td className="p-4 font-medium">{b.id.slice(0, 8).toUpperCase()}</td>
               <td className="p-4">{b.bookingDate}</td>
               <td className="p-4">{b.timeSlot}</td>
-              <td className="p-4 font-medium">₹{b.price}</td>
-              <td className="p-4"><StatusBadge status={b.paymentStatus} /></td>
-              <td className="p-4"><StatusBadge status={b.bookingStatus} /></td>
+              <td className="p-4 font-medium">৳{b.price}</td>
+              <td className="p-4">
+                <StatusBadge status={b.paymentStatus} />
+              </td>
+              <td className="p-4">
+                <StatusBadge status={b.bookingStatus} />
+              </td>
             </tr>
           ))}
         </tbody>
@@ -296,7 +361,12 @@ function ProfileForm({ me, onSaved }: { me: UserProfile; onSaved: () => Promise<
     }
   }
 
-  const initials = fullName.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase();
+  const initials = fullName
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
   return (
     <form onSubmit={onSave} className="grid gap-6 lg:grid-cols-3">
       <div className="lg:col-span-1 rounded-2xl border border-border/60 bg-card p-6 shadow-sm text-center">
@@ -317,12 +387,28 @@ function ProfileForm({ me, onSaved }: { me: UserProfile; onSaved: () => Promise<
       <div className="lg:col-span-2 rounded-2xl border border-border/60 bg-card p-6 shadow-sm">
         <h3 className="font-semibold">Personal details</h3>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          <div className="space-y-2"><Label>Full name</Label><Input value={fullName} onChange={(e) => setFullName(e.target.value)} /></div>
-          <div className="space-y-2"><Label>Phone</Label><Input value={phone} onChange={(e) => setPhone(e.target.value)} /></div>
-          <div className="space-y-2 sm:col-span-2"><Label>Email</Label><Input defaultValue={me.email} disabled /></div>
-          <div className="space-y-2"><Label>Role</Label><Input defaultValue={me.role} disabled /></div>
+          <div className="space-y-2">
+            <Label>Full name</Label>
+            <Input value={fullName} onChange={(e) => setFullName(e.target.value)} />
+          </div>
+          <div className="space-y-2">
+            <Label>Phone</Label>
+            <Input value={phone} onChange={(e) => setPhone(e.target.value)} />
+          </div>
+          <div className="space-y-2 sm:col-span-2">
+            <Label>Email</Label>
+            <Input defaultValue={me.email} disabled />
+          </div>
+          <div className="space-y-2">
+            <Label>Role</Label>
+            <Input defaultValue={me.role} disabled />
+          </div>
         </div>
-        <Button type="submit" disabled={saving} className="mt-6 bg-accent text-accent-foreground hover:bg-accent/90">
+        <Button
+          type="submit"
+          disabled={saving}
+          className="mt-6 bg-accent text-accent-foreground hover:bg-accent/90"
+        >
           {saving ? "Saving…" : "Save changes"}
         </Button>
       </div>
@@ -341,7 +427,10 @@ function SettingsPanel() {
           { l: "Marketing offers", d: "Occasional discounts and events." },
           { l: "Dark mode", d: "Follow system theme." },
         ].map((s, i) => (
-          <div key={s.l} className="flex items-center justify-between border-b border-border/40 pb-4 last:border-0">
+          <div
+            key={s.l}
+            className="flex items-center justify-between border-b border-border/40 pb-4 last:border-0"
+          >
             <div>
               <p className="text-sm font-medium">{s.l}</p>
               <p className="text-xs text-muted-foreground">{s.d}</p>

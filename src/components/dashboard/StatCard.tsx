@@ -21,7 +21,9 @@ export function StatCard({ label, value, icon: Icon, trend, tone = "primary" }: 
     <div className="rounded-2xl bg-card border border-border/60 p-5 shadow-[0_2px_8px_-4px_rgba(15,23,42,0.08)] hover:shadow-[0_8px_24px_-12px_rgba(15,23,42,0.15)] transition-shadow">
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{label}</p>
+          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+            {label}
+          </p>
           <p className="mt-2 text-3xl font-bold tracking-tight text-foreground">{value}</p>
           {trend && <p className="mt-1 text-xs text-secondary font-medium">{trend}</p>}
         </div>

@@ -19,7 +19,10 @@ export const Route = createFileRoute("/booking")({
   head: () => ({
     meta: [
       { title: "Book a Slot — Kickoff Arena" },
-      { name: "description", content: "Pick your date and time. Live slot availability updated in real time." },
+      {
+        name: "description",
+        content: "Pick your date and time. Live slot availability updated in real time.",
+      },
     ],
   }),
   component: BookingPage,
@@ -40,20 +43,24 @@ function BookingPage() {
     listTimeSlots()
       .then((s) => setSlots(s.map((x) => x.label)))
       .catch(() => setSlots([]));
-    listPricingRules().then(setRules).catch(() => setRules([]));
+    listPricingRules()
+      .then(setRules)
+      .catch(() => setRules([]));
   }, []);
 
   useEffect(() => {
     if (!dateStr) return;
     listBookingsForDate(dateStr)
       .then((rows) => {
-        setBookedSlots(new Set(rows.filter((r) => r.bookingStatus !== "cancelled").map((r) => r.timeSlot)));
+        setBookedSlots(
+          new Set(rows.filter((r) => r.bookingStatus !== "cancelled").map((r) => r.timeSlot)),
+        );
       })
       .catch(() => setBookedSlots(new Set()));
   }, [dateStr]);
 
   const price = selected && date ? computePrice(rules, selected, date) : 0;
-  const tax = Math.round(price * 0.18);
+  const tax = Math.round(price * 0.15);
   const total = price + tax;
 
   async function confirmBooking() {
@@ -76,10 +83,10 @@ function BookingPage() {
       await createNotification({
         userId: user.uid,
         title: "Booking confirmed",
-        body: `${selected} on ${date.toDateString()} · Total ₹${total}`,
+        body: `${selected} on ${date.toDateString()} · Total ৳${total}`,
       });
       toast.success("Booking confirmed!", {
-        description: `${selected} on ${date.toDateString()} · Total ₹${total} · Ref ${id.slice(0, 6)}`,
+        description: `${selected} on ${date.toDateString()} · Total ৳${total} · Ref ${id.slice(0, 6)}`,
       });
       setBookedSlots((prev) => new Set(prev).add(selected));
       setSelected(null);
@@ -99,10 +106,12 @@ function BookingPage() {
               Book a slot
             </span>
             <h1 className="mt-3 text-4xl font-bold tracking-tight">Pick your date & time</h1>
-            <p className="mt-2 text-muted-foreground">Slots update in real time. Cancel up to 6 hours before start.</p>
+            <p className="mt-2 text-muted-foreground">
+              Slots update in real time. Cancel up to 6 hours before start.
+            </p>
           </div>
           <div className="flex items-center gap-2 rounded-xl border border-border/60 bg-card px-4 py-2 text-sm text-muted-foreground shadow-sm">
-            <MapPin className="h-4 w-4 text-secondary" /> {business.name}, Indiranagar
+            <MapPin className="h-4 w-4 text-secondary" /> {business.name}, Kandirpar
           </div>
         </div>
 
@@ -156,16 +165,28 @@ function BookingPage() {
                       className={cn(
                         "group relative rounded-xl border p-3 text-left transition-all",
                         "disabled:cursor-not-allowed",
-                        status === "available" && "border-border bg-background hover:border-secondary hover:bg-secondary/5",
-                        status === "booked" && "border-destructive/20 bg-destructive/5 text-muted-foreground",
-                        status === "selected" && "border-primary bg-primary text-primary-foreground shadow-md scale-[1.02]",
+                        status === "available" &&
+                          "border-border bg-background hover:border-secondary hover:bg-secondary/5",
+                        status === "booked" &&
+                          "border-destructive/20 bg-destructive/5 text-muted-foreground",
+                        status === "selected" &&
+                          "border-primary bg-primary text-primary-foreground shadow-md scale-[1.02]",
                       )}
                     >
                       <p className="text-sm font-semibold">{t}</p>
-                      <p className={cn("mt-1 text-xs capitalize",
-                        status === "selected" ? "text-primary-foreground/80" : "text-muted-foreground",
-                      )}>
-                        {status === "booked" ? "Booked" : status === "selected" ? "Selected" : `₹${computePrice(rules, t, date ?? new Date())}`}
+                      <p
+                        className={cn(
+                          "mt-1 text-xs capitalize",
+                          status === "selected"
+                            ? "text-primary-foreground/80"
+                            : "text-muted-foreground",
+                        )}
+                      >
+                        {status === "booked"
+                          ? "Booked"
+                          : status === "selected"
+                            ? "Selected"
+                            : `৳${computePrice(rules, t, date ?? new Date())}`}
                       </p>
                       {status === "selected" && (
                         <CheckCircle2 className="absolute right-2 top-2 h-4 w-4" />
@@ -180,15 +201,26 @@ function BookingPage() {
             <div className="rounded-2xl border border-border/60 bg-card p-6 shadow-[0_2px_8px_-4px_rgba(15,23,42,0.06)]">
               <h3 className="text-lg font-semibold">Booking summary</h3>
               <dl className="mt-4 divide-y divide-border/60 text-sm">
-                <Row label="Date" value={date ? date.toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long" }) : "—"} />
+                <Row
+                  label="Date"
+                  value={
+                    date
+                      ? date.toLocaleDateString(undefined, {
+                          weekday: "long",
+                          day: "numeric",
+                          month: "long",
+                        })
+                      : "—"
+                  }
+                />
                 <Row label="Time" value={selected ?? "Select a slot"} />
                 <Row label="Duration" value="1 hour" />
-                <Row label="Price" value={selected ? `₹${price}` : "—"} />
-                <Row label="Tax (18%)" value={selected ? `₹${tax}` : "—"} />
+                <Row label="Price" value={selected ? `৳${price}` : "—"} />
+                <Row label="VAT (15%)" value={selected ? `৳${tax}` : "—"} />
                 <div className="flex items-center justify-between py-4">
                   <span className="text-sm font-semibold">Total</span>
                   <span className="text-2xl font-bold tracking-tight">
-                    {selected ? `₹${total}` : "—"}
+                    {selected ? `৳${total}` : "—"}
                   </span>
                 </div>
               </dl>

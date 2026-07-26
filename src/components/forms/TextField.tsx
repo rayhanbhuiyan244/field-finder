@@ -1,6 +1,13 @@
 import * as React from "react";
 import { useFormContext, type FieldValues, type Path } from "react-hook-form";
-import { FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage } from "@/components/ui/form";
+import {
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormDescription,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
 export interface TextFieldProps<T extends FieldValues> {
@@ -16,8 +23,15 @@ export interface TextFieldProps<T extends FieldValues> {
 }
 
 export function TextField<T extends FieldValues>({
-  name, label, placeholder, type = "text", description, autoComplete,
-  required, disabled, className,
+  name,
+  label,
+  placeholder,
+  type = "text",
+  description,
+  autoComplete,
+  required,
+  disabled,
+  className,
 }: TextFieldProps<T>) {
   const form = useFormContext<T>();
   return (
@@ -29,7 +43,11 @@ export function TextField<T extends FieldValues>({
           {label && (
             <FormLabel>
               {label}
-              {required && <span aria-hidden className="ml-0.5 text-destructive">*</span>}
+              {required && (
+                <span aria-hidden className="ml-0.5 text-destructive">
+                  *
+                </span>
+              )}
             </FormLabel>
           )}
           <FormControl>

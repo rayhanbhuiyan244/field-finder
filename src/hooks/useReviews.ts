@@ -1,10 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import {
-  listReviews,
-  createReview,
-  averageRating,
-  type Review,
-} from "@/services/reviewService";
+import { listReviews, createReview, averageRating, type Review } from "@/services/reviewService";
 
 export function useReviews() {
   const [data, setData] = useState<Review[]>([]);

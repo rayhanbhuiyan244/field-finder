@@ -1,6 +1,13 @@
 import * as React from "react";
 import { useFormContext, type FieldValues, type Path } from "react-hook-form";
-import { FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescription } from "@/components/ui/form";
+import {
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+  FormDescription,
+} from "@/components/ui/form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 
@@ -21,7 +28,13 @@ export interface RadioFieldProps<T extends FieldValues> {
 }
 
 export function RadioField<T extends FieldValues>({
-  name, label, description, options, required, className, orientation = "vertical",
+  name,
+  label,
+  description,
+  options,
+  required,
+  className,
+  orientation = "vertical",
 }: RadioFieldProps<T>) {
   const form = useFormContext<T>();
   return (
@@ -33,7 +46,11 @@ export function RadioField<T extends FieldValues>({
           {label && (
             <FormLabel>
               {label}
-              {required && <span aria-hidden className="ml-0.5 text-destructive">*</span>}
+              {required && (
+                <span aria-hidden className="ml-0.5 text-destructive">
+                  *
+                </span>
+              )}
             </FormLabel>
           )}
           <FormControl>
@@ -48,7 +65,9 @@ export function RadioField<T extends FieldValues>({
                   <div key={opt.value} className="flex items-start gap-2">
                     <RadioGroupItem value={opt.value} id={id} />
                     <div className="grid gap-0.5 leading-none">
-                      <Label htmlFor={id} className="cursor-pointer font-medium">{opt.label}</Label>
+                      <Label htmlFor={id} className="cursor-pointer font-medium">
+                        {opt.label}
+                      </Label>
                       {opt.description && (
                         <p className="text-xs text-muted-foreground">{opt.description}</p>
                       )}

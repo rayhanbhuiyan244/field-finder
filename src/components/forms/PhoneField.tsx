@@ -1,6 +1,13 @@
 import * as React from "react";
 import { useFormContext, type FieldValues, type Path } from "react-hook-form";
-import { FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage } from "@/components/ui/form";
+import {
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormDescription,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Phone } from "lucide-react";
 
@@ -15,8 +22,13 @@ export interface PhoneFieldProps<T extends FieldValues> {
 }
 
 export function PhoneField<T extends FieldValues>({
-  name, label, description, placeholder = "+91 98450 12345",
-  required, disabled, className,
+  name,
+  label,
+  description,
+  placeholder = "+880 1712 345678",
+  required,
+  disabled,
+  className,
 }: PhoneFieldProps<T>) {
   const form = useFormContext<T>();
   return (
@@ -28,12 +40,19 @@ export function PhoneField<T extends FieldValues>({
           {label && (
             <FormLabel>
               {label}
-              {required && <span aria-hidden className="ml-0.5 text-destructive">*</span>}
+              {required && (
+                <span aria-hidden className="ml-0.5 text-destructive">
+                  *
+                </span>
+              )}
             </FormLabel>
           )}
           <FormControl>
             <div className="relative">
-              <Phone aria-hidden className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Phone
+                aria-hidden
+                className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+              />
               <Input
                 inputMode="tel"
                 type="tel"

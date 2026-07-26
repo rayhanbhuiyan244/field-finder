@@ -26,10 +26,7 @@ export function formatDate(
   return new Intl.DateTimeFormat(locale, opts).format(d);
 }
 
-export function formatTime(
-  input: string | number | Date,
-  locale: string = "en-GB",
-): string {
+export function formatTime(input: string | number | Date, locale: string = "en-GB"): string {
   const d = input instanceof Date ? input : new Date(input);
   if (isNaN(d.getTime())) return String(input);
   return new Intl.DateTimeFormat(locale, {

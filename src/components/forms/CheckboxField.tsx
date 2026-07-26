@@ -1,6 +1,13 @@
 import * as React from "react";
 import { useFormContext, type FieldValues, type Path } from "react-hook-form";
-import { FormField, FormItem, FormControl, FormLabel, FormDescription, FormMessage } from "@/components/ui/form";
+import {
+  FormField,
+  FormItem,
+  FormControl,
+  FormLabel,
+  FormDescription,
+  FormMessage,
+} from "@/components/ui/form";
 import { Checkbox } from "@/components/ui/checkbox";
 
 export interface CheckboxFieldProps<T extends FieldValues> {
@@ -12,7 +19,11 @@ export interface CheckboxFieldProps<T extends FieldValues> {
 }
 
 export function CheckboxField<T extends FieldValues>({
-  name, label, description, disabled, className,
+  name,
+  label,
+  description,
+  disabled,
+  className,
 }: CheckboxFieldProps<T>) {
   const form = useFormContext<T>();
   return (

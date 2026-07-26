@@ -20,7 +20,8 @@ export async function listPricingRules(): Promise<PricingRule[]> {
 // Compute the price for a given time slot + date based on pricing rules.
 // Falls back to a sensible default if no rules match.
 export function computePrice(rules: PricingRule[], time: string, date: Date): number {
-  const findBy = (label: string) => rules.find((r) => r.label.toLowerCase() === label.toLowerCase());
+  const findBy = (label: string) =>
+    rules.find((r) => r.label.toLowerCase() === label.toLowerCase());
   const hour = Number.parseInt(time.slice(0, 2), 10);
   const weekend = date.getDay() === 0 || date.getDay() === 6;
   const peak = findBy("Peak Hour");
