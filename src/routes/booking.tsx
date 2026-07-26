@@ -111,7 +111,7 @@ function BookingPage() {
             </p>
           </div>
           <div className="flex items-center gap-2 rounded-xl border border-border/60 bg-card px-4 py-2 text-sm text-muted-foreground shadow-sm">
-            <MapPin className="h-4 w-4 text-secondary" /> {business.name}, Kandirpar
+            <MapPin className="h-4 w-4 text-secondary" /> {business.name}, Shashongacha
           </div>
         </div>
 

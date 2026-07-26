@@ -59,7 +59,7 @@ function Landing() {
   const [business, setBusiness] = useState<BusinessSettings>({
     name: "Kickoff Arena",
     tagline: "Premium 5-a-side football turf",
-    address: "Station Road, Kandirpar, Cumilla 3500",
+    address: "Shashongacha, Cumilla 3500",
     phone: "+880 1712 345678",
     email: "hello@kickoffarena.com",
     hours: "6:00 AM - 12:00 AM, all days",
@@ -351,7 +351,7 @@ function Landing() {
               </div>
               <div className="absolute bottom-4 left-4 rounded-xl bg-card px-4 py-2 shadow-lg">
                 <p className="text-xs text-muted-foreground">Kickoff Arena</p>
-                <p className="text-sm font-semibold">Kandirpar, Cumilla</p>
+                <p className="text-sm font-semibold">Shashongacha, Cumilla</p>
               </div>
             </div>
           </div>

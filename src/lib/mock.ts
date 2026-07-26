@@ -315,7 +315,7 @@ export const stats = {
 export const business = {
   name: "Kickoff Arena",
   tagline: "Premium 5-a-side football turf",
-  address: "Station Road, Kandirpar, Cumilla 3500",
+  address: "Shashongacha, Cumilla 3500",
   phone: "+880 1712 345678",
   email: "hello@kickoffarena.com",
   hours: "6:00 AM - 12:00 AM, all days",
