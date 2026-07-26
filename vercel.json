@@ -2,7 +2,7 @@
   "buildCommand": "npm run build",
   "devCommand": "npm run dev",
   "installCommand": "npm install",
-  "framework": "other",
+  "framework": "tanstack-start-lovable",
   "outputDirectory": "dist",
   "env": {
     "VITE_FIREBASE_API_KEY": "@VITE_FIREBASE_API_KEY",
